@@ -1,0 +1,6 @@
+---
+- hosts: bench
+  become: yes
+  roles:
+    - common
+    - bench

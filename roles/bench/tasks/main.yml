@@ -1,0 +1,40 @@
+---
+- name: "Install golang"
+  apt:
+    name: "{{ packages }}"
+    update_cache: yes
+  vars:
+    packages:
+    - golang-go
+
+- name: "Install dep"
+  command: "go get -u github.com/golang/dep/cmd/dep"
+  become: yes
+  become_user: isucon
+
+- name: "Initialize bench build"
+  make:
+    chdir: /home/isucon/isucon2018-final/bench
+    target: init
+  become: yes
+  become_user: isucon
+  environment:
+    PATH: "{{ ansible_env.USER }}/go/bin:{{ ansible_env.PATH }}"
+
+- name: "Fetch bench dependencies"
+  make:
+    chdir: /home/isucon/isucon2018-final/bench
+    target: deps
+  become: yes
+  become_user: isucon
+  environment:
+    PATH: "{{ ansible_env.USER }}/go/bin:{{ ansible_env.PATH }}"
+
+- name: "Build bench"
+  make:
+    chdir: /home/isucon/isucon2018-final/bench
+    target: build
+  become: yes
+  become_user: isucon
+  environment:
+    PATH: "{{ ansible_env.USER }}/go/bin:{{ ansible_env.PATH }}"

@@ -1,0 +1,20 @@
+[Unit]
+Description = isucoin blackbox application
+
+[Service]
+LimitNOFILE=102400
+LimitNPROC=102400
+
+WorkingDirectory=/home/isucon/isucon2018-final/blackbox
+
+ExecStartPre = /usr/local/bin/docker-compose -f docker-compose.local.yml build
+ExecStart = /usr/local/bin/docker-compose -f docker-compose.local.yml up
+ExecStop = /usr/local/bin/docker-compose -f docker-compose.local.yml down
+
+Restart   = always
+Type      = simple
+User      = isucon
+Group     = isucon
+
+[Install]
+WantedBy = multi-user.target

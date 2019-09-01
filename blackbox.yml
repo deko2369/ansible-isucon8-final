@@ -1,0 +1,6 @@
+---
+- hosts: blackbox
+  become: yes
+  roles:
+    - common
+    - blackbox

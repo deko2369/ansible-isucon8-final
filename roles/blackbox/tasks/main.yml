@@ -1,0 +1,15 @@
+---
+- name: "Install isucoin.blackbox.service"
+  copy:
+    src: isucoin.blackbox.service
+    dest: /etc/systemd/system/isucoin.blackbox.service
+    owner: root
+    group: root
+    mode: 0644
+
+- name: "Start isucoin.blackbox.service"
+  systemd:
+    state: started
+    name: isucoin.blackbox.service
+    enabled: yes
+    daemon_reload: yes
