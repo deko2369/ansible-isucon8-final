@@ -4,3 +4,13 @@
   roles:
   - common
   - blackbox
+
+- hosts: webapp
+  become: yes
+  tasks:
+  - name: "Copy certificate to webapp for register one"
+    copy:
+      src: /tmp/_.isucon8.flying-chair.net.crt
+      dest: /usr/local/share/ca-certificates
+  - name: "Register certificate"
+    command: "update-ca-certificates"
