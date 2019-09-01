@@ -2,5 +2,5 @@
 - hosts: webapp
   become: yes
   roles:
-    - common
-    - webapp
+  - common
+  - webapp
