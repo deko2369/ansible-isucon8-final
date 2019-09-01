@@ -9,6 +9,7 @@ $ vim ansible.cfg
 
 # provisioning
 $ ansible-playbook -i inventory bench.yml -K
-$ ansible-playbook -i inventory webapp.yml -K
-$ ansible-playbook -i inventory blackbox.yml -K
 ```
+
+## TODO
+* Regenerate crt/key files for SSL
