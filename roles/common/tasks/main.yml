@@ -53,9 +53,3 @@
     update: no
   become: yes
   become_user: isucon
-
-- name: "Patch isucon repository for bug fix"
-  replace:
-    path: /home/isucon/isucon2018-final/webapp/go/Dockerfile
-    regexp: '\smysql-client'
-    replace: ' default-mysql-client'

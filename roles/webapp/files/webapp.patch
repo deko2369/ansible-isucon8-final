@@ -1,0 +1,38 @@
+diff --git a/webapp/go/Dockerfile b/webapp/go/Dockerfile
+index 5c65163..de6f61c 100644
+--- a/webapp/go/Dockerfile
++++ b/webapp/go/Dockerfile
+@@ -1,4 +1,4 @@
+ FROM golang:1.11
+ 
+-RUN apt-get update && apt-get -y install mysql-client
++RUN apt-get update && apt-get -y install default-mysql-client
+ RUN curl -sL https://github.com/golang/dep/releases/download/v0.5.0/dep-linux-amd64 > /usr/bin/dep && chmod +x /usr/bin/dep
+diff --git a/webapp/go/src/isucon8/isubank/isubank.go b/webapp/go/src/isucon8/isubank/isubank.go
+index 9785aca..2374619 100644
+--- a/webapp/go/src/isucon8/isubank/isubank.go
++++ b/webapp/go/src/isucon8/isubank/isubank.go
+@@ -3,6 +3,7 @@ package isubank
+ 
+ import (
+ 	"bytes"
++	"crypto/tls"
+ 	"encoding/json"
+ 	"errors"
+ 	"fmt"
+@@ -155,7 +156,14 @@ func (b *Isubank) request(p string, v interface{}, r isubankResponse) error {
+ 	req.Header.Set("Content-Type", "application/json")
+ 	req.Header.Set("Authorization", "Bearer "+b.appID)
+ 
+-	res, err := http.DefaultClient.Do(req)
++	c := &http.Client{
++		Transport: &http.Transport{
++			TLSClientConfig: &tls.Config{
++				InsecureSkipVerify: true,
++			},
++		},
++	}
++	res, err := c.Do(req)
+ 	if err != nil {
+ 		return fmt.Errorf("isubank request failed. err: %s", err)
+ 	}

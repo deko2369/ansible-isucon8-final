@@ -9,7 +9,7 @@
 
 - name: "Start isucoin.blackbox.service"
   systemd:
-    state: started
+    state: restarted
     name: isucoin.blackbox.service
     enabled: yes
     daemon_reload: yes

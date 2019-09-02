@@ -7,12 +7,26 @@
     group: root
     mode: 0644
 
+- name: "Apply patch"
+  patch:
+    src: webapp.patch
+    basedir: /home/isucon/isucon2018-final
+    strip: 1
+  become: yes
+  become_user: isucon
+
 - name: "Start isucoin.service"
   systemd:
-    state: started
+    state: restarted
     name: isucoin.service
     enabled: yes
     daemon_reload: yes
 
+- name: "Install mysql client"
+  apt:
+    name: default-mysql-client
+    update_cache: yes
+
 - name: "Fixed endpoint"
   command: "mysql --protocol=TCP --host=localhost --port=13306 -uisucon -pisucon -e \"UPDATE setting SET val = 'https://{{ endpoint }}:5515' WHERE name = 'bank_endpoint'; UPDATE setting SET val = 'https://{{ endpoint }}:5516' WHERE name = 'log_endpoint'\" isucoin"
+

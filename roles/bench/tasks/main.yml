@@ -12,6 +12,14 @@
   become: yes
   become_user: isucon
 
+- name: "Apply patch"
+  patch:
+    src: bench.patch
+    basedir: /home/isucon/isucon2018-final
+    strip: 1
+  become: yes
+  become_user: isucon
+
 - name: "Initialize bench build"
   make:
     chdir: /home/isucon/isucon2018-final/bench
