@@ -1,3 +1,7 @@
+## Requirements
+
+* Ubuntu 18.04 LTS
+
 ## How to use
 
 ```
@@ -9,7 +13,25 @@ $ vim ansible.cfg
 
 # provisioning
 $ ansible-playbook -i inventory bench.yml -K
+$ ansible-playbook -i inventory blackbox.yml -K
+$ ansible-playbook -i inventory webapp.yml -K
 ```
 
-## TODO
-* Regenerate crt/key files for SSL
+## Specifications
+
+### User information
+
+* User: isucon
+* Password: isucon
+
+### Blackbox
+
+```
+$ systemctl start isucoin.blackbox.service
+```
+
+### Webapp
+
+```
+$ systemctl start isucoin.service
+```
