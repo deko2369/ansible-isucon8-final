@@ -23,3 +23,130 @@ index 4c6eed9..f28e56e 100644
  	hc := &http.Client{
  		Jar:       jar,
  		Transport: transport,
+diff --git a/bench/src/bench/cmd/bench-worker/main.go b/bench/src/bench/cmd/bench-worker/main.go
+index be61118..ea04d3c 100644
+--- a/bench/src/bench/cmd/bench-worker/main.go
++++ b/bench/src/bench/cmd/bench-worker/main.go
+@@ -4,6 +4,7 @@ import (
+ 	"bytes"
+ 	"context"
+ 	crand "crypto/rand"
++	"crypto/tls"
+ 	"encoding/binary"
+ 	"encoding/json"
+ 	"flag"
+@@ -22,8 +23,9 @@ import (
+ 	"strings"
+ 	"time"
+ 
+-	"github.com/hpcloud/tail"
+ 	"bench/portal"
++
++	"github.com/hpcloud/tail"
+ 	"github.com/pkg/errors"
+ )
+ 
+@@ -153,7 +155,14 @@ func run(tempDir, portalUrl string) {
+ 
+ 		req.Header.Set("Content-Type", writer.FormDataContentType())
+ 
+-		res, err := http.DefaultClient.Do(req)
++		c := &http.Client{
++			Transport: &http.Transport{
++				TLSClientConfig: &tls.Config{
++					InsecureSkipVerify: true,
++				},
++			},
++		}
++		res, err := c.Do(req)
+ 		if err != nil {
+ 			return errors.Wrap(err, "request failed")
+ 		}
+diff --git a/bench/src/bench/isubank/isubank.go b/bench/src/bench/isubank/isubank.go
+index 98f580d..2c96d4b 100644
+--- a/bench/src/bench/isubank/isubank.go
++++ b/bench/src/bench/isubank/isubank.go
+@@ -2,6 +2,7 @@ package isubank
+ 
+ import (
+ 	"bytes"
++	"crypto/tls"
+ 	"encoding/json"
+ 	"io/ioutil"
+ 	"net/http"
+@@ -75,7 +76,14 @@ func (b *Isubank) GetCredit(bankid string) (int64, error) {
+ 	*u = *b.endpoint
+ 	u.Path = path.Join(u.Path, "/credit")
+ 	u.RawQuery = url.Values{"bank_id": []string{bankid}}.Encode()
+-	res, err := http.Get(u.String())
++	c := &http.Client{
++		Transport: &http.Transport{
++			TLSClientConfig: &tls.Config{
++				InsecureSkipVerify: true,
++			},
++		},
++	}
++	res, err := c.Get(u.String())
+ 	if err != nil {
+ 		return 0, errors.Wrap(err, "isubank get_credit failed")
+ 	}
+@@ -106,7 +114,14 @@ func (b *Isubank) request(p string, v map[string]interface{}, r isubankResponse)
+ 	if err := json.NewEncoder(body).Encode(v); err != nil {
+ 		return errors.Wrap(err, "isubank json encode failed")
+ 	}
+-	res, err := http.Post(u.String(), "application/json", body)
++	c := &http.Client{
++		Transport: &http.Transport{
++			TLSClientConfig: &tls.Config{
++				InsecureSkipVerify: true,
++			},
++		},
++	}
++	res, err := c.Post(u.String(), "application/json", body)
+ 	if err != nil {
+ 		return errors.Wrap(err, "isubank request failed")
+ 	}
+diff --git a/bench/src/bench/isulog/isulog.go b/bench/src/bench/isulog/isulog.go
+index 922b2b5..78438d8 100644
+--- a/bench/src/bench/isulog/isulog.go
++++ b/bench/src/bench/isulog/isulog.go
+@@ -1,6 +1,7 @@
+ package isulog
+ 
+ import (
++	"crypto/tls"
+ 	"encoding/json"
+ 	"io"
+ 	"io/ioutil"
+@@ -208,7 +209,14 @@ func (b *Isulog) Initialize() error {
+ 	u := new(url.URL)
+ 	*u = *b.endpoint
+ 	u.Path = path.Join(u.Path, "/initialize")
+-	res, err := http.Post(u.String(), "application/json", strings.NewReader("{}"))
++	c := &http.Client{
++		Transport: &http.Transport{
++			TLSClientConfig: &tls.Config{
++				InsecureSkipVerify: true,
++			},
++		},
++	}
++	res, err := c.Post(u.String(), "application/json", strings.NewReader("{}"))
+ 	if err != nil {
+ 		return errors.Wrap(err, "isulog /initialize failed")
+ 	}
+@@ -243,7 +251,14 @@ func (b *Isulog) getLogs(v url.Values) ([]*Log, error) {
+ 	u.Path = path.Join(u.Path, "/logs")
+ 	u.RawQuery = v.Encode()
+ 
+-	res, err := http.Get(u.String())
++	c := &http.Client{
++		Transport: &http.Transport{
++			TLSClientConfig: &tls.Config{
++				InsecureSkipVerify: true,
++			},
++		},
++	}
++	res, err := c.Get(u.String())
+ 	if err != nil {
+ 		return nil, errors.Wrap(err, "isulog GET /logs failed")
+ 	}
